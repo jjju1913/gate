@@ -1,0 +1,17 @@
+name: diagnostic
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for url in \
+            "https://check-sstp.jajao.workers.dev/" \
+            "https://check-sstp.jajao.workers.dev/check?sstp=vpn:vpn@" \
+            "https://cold-boat-a6cc.jajao.workers.dev/" \
+            "https://www.cloudflare.com/" ; do
+            echo "=== $url ==="
+            code=$(curl -s -o /tmp/out.txt -w '%{http_code}' --max-time 20 "$url" || echo "CURL_FAIL")
+            echo "HTTP: $code"
+            head -c 120 /tmp/out.txt; echo
+          done
